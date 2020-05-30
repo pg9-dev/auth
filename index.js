@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 // Importing routes
 const authRoute = require("./routes/auth");
+const postRoute = require("./routes/posts");
 
 const PORT = 8000;
 dotenv.config();
@@ -22,5 +23,6 @@ app.use(express.json());
 
 // Route MiddleWare
 app.use("/api/user", authRoute);
+app.use("/api/posts", postRoute);
 
 app.listen(PORT, () => console.log("Server is running on port: " + PORT));

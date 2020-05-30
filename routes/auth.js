@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const User = require("../model/User");
+const jwt = require("jsonwebtoken");
 const { registerValidation, loginValidation } = require("../validation");
-
 
 router.post("/register", async (req, res) => {
     // Validate data
@@ -17,7 +17,6 @@ router.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-
     // Create a new user
     const user = new User({
         name: req.body.name,
@@ -26,7 +25,7 @@ router.post("/register", async (req, res) => {
     });
     try {
         const savedUser = await user.save();
-        res.send({user: savedUser._id});
+        res.send({ user: savedUser._id });
     } catch (err) {
         res.status(400).send(err);
     }
@@ -44,9 +43,12 @@ router.post("/login", async (req, res) => {
 
     // Password is correct
     const validPass = await bcrypt.compare(req.body.password, user.password);
-    if (!validPass) return res.status(400).send("Login credentials aren't valid.");
+    if (!validPass)
+        return res.status(400).send("Login credentials aren't valid.");
 
-    res.send('Login Success');
+    // Create and assign a token
+    const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+    res.header("authToken", token).send(token);
+});
 
-})
 module.exports = router;
