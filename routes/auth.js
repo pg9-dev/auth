@@ -51,4 +51,17 @@ router.post("/login", async (req, res) => {
     res.header("authToken", token).send(token);
 });
 
+router.get("/", async (req, res) => {
+    // gets all users
+    const users = await User.find({});
+    // Transforms the database response
+    const response = users.map((item) => {
+        return {
+            name: item.name,
+            email: item.email,
+        };
+    });
+    res.send(response);
+});
+
 module.exports = router;
