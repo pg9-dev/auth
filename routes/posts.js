@@ -4,7 +4,6 @@ const User = require("../model/User");
 
 router.get("/", verify, async (req, res) => {
     let {name} = await User.findOne({_id: req.user._id});
-    console.log(name);
     res.send(name);
 });
 
