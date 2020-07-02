@@ -10,7 +10,7 @@ Auth is a backend authentication server exposing a RESTFUL API to requesting cli
 
 #### User Model
 
-A simplistic model for user to illustrate the authentication example. 
+A simplistic model for user to illustrate the authentication example.
 
 # Instructions to run
 
@@ -18,9 +18,7 @@ A simplistic model for user to illustrate the authentication example.
 
 This project is packaged via npm; the respective package.json file contains all required scripts.
 
-> For convenience, `.env` file is attached with the repository and the database configuration are already in place. Not recommended for production.
-
-In order to the run the project, first the dependencies need to be installed.
+In order to the run the project, the dependencies need to be installed first.
 
 ---
 
@@ -40,82 +38,91 @@ To start the server:
 
 ---
 
-The project expects a postgresql database server at port `5432` with the appropriate configuration; failure to find a database-server would cause the server to throw an error. Refer to the `ormconfig.json` for details on configuration. Any changes in database configuration must be corresponded by changes in the `ormconfig.json` file.
+The project expects a mongoDB database server with the appropriate mongoose configuration; failure to find a database-server would cause the server to throw an error. The project expects the connection to saved in a `.env` file against the variable `DB_CONNECT`.
 
-If database configurations are met then the server will launch at `localhost:8000/graphql`. The project is ran via `nodemon`, any changes in the files would cause the server to restart for faster dev. experience.
+If database configurations are met then the server will launch at `localhost:8000/` and listen for incoming requests. The project is ran via `nodemon`, any changes in the files would cause the server to restart for a faster dev. experience.
 
+# REST API: GET and POST requests
 
-
-# Graph QL API: types, mutation and queries
-
-#### Types
+#### POST REQUESTS
 
 ---
 
-```graphql
-LoginResponse {
-  accessToken: String!
-  user: User!
+## Register User
+
+#### POST api/user/register
+
+```json
+Body
+{
+  "name":"sampleName",
+  "password":"sampelPassword",
+  "email":"sampleEmail@sampleDomain.com"
 }
 ```
 
-```graphql
-User {
-  id: Int!
-  email: String!
+#### Expected Response
+
+```json
+{
+    "user": "userID"
 }
 ```
 
-#### Mutations
+## Login User
 
----
+#### POST api/user/login
 
-```graphql
-Mutation {
-  register(password: String!, email: String!): Boolean!
-  login(password: String!, email: String!): LoginResponse!
-  revokeRefreshTokenForUser(userId: Int!): Boolean!
-  logout: Boolean!
+```json
+Body
+{
+  "email":"sampleEmail@sampleDomain.com",
+  "password":"sampelPassword"
 }
 ```
 
-#### Queries
+#### Expected Response
 
----
-
-```graphql
-Query {
-  hello: String!
-  bye: String!
-  users: [User!]!
-  me: User
+```json
+{
+    "auth-token": "token"
 }
 ```
 
-# Example API requests
+## Access Protected Route
 
-#### Registration
+#### GET api/posts
 
-Registering an user with a sample email and password.
-
-```graphql
-mutation registerUser {
-  register(email: "hobby@gmail.com", password: "userPassword")
+```json
+Header
+{
+  "auth-token":"token"
 }
 ```
 
-#### Login
+#### Expected Response
 
-Logging in an user and returning accessToken for further requests.
-
-```graphql
-mutation login {
-  login(email: "hobby@gmail.com", password: "userPassword") {
-    accessToken
-  }
+```json
+{
+    "name": "userName"
 }
+```
+
+## Get All Users
+
+#### GET api/user
+
+#### Expected Response
+
+```json
+[
+    {
+        "name": "sampleName",
+        "email": "sampleEmail@sampleDomain.com"
+    }
+]
 ```
 
 # Acknowledgement
 
-This project is based on tutorials by youtuber Ben Awad. Here is a link to Ben's channel:https://www.youtube.com/user/99baddawg; like, share and follow his channel if you appreciate the content.
+This project is based on tutorials by youtuber DevEd. Here is a link to Ben's channel: https://www.youtube.com/watch?v=2jqok-WgelI99baddawg; like, share and follow his channel if you appreciate the content.
